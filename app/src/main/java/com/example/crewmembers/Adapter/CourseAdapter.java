@@ -74,7 +74,7 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.ViewHolder
         holder.wiki.setText(crewMember.getWiki());
         holder.wiki.setPaintFlags(Paint.UNDERLINE_TEXT_FLAG);
         holder.wiki.setTextColor(R.color.purple_500);
-        Picasso.get().load(crewMember.getImage()).into(holder.image);
+        Picasso.get().load(crewMember.getImage()).placeholder(R.drawable.ic_launcher_background).into(holder.image);
     }
 
     @Override
