@@ -2,6 +2,10 @@ package com.example.crewmembers;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
+import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -30,12 +34,13 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    Button refreshBtn, deleteBtn;
+    Button refreshBtn, deleteBtn, viewCrewBtn;
     public static CrewMemberDatabase crewMemberDatabase;
 
     // creating variables for
     // our ui components.
     private RecyclerView courseRV;
+    private CrewMember AlenMusk;
 
     // variable for our adapter
     // class and array list
@@ -61,7 +66,8 @@ public class MainActivity extends AppCompatActivity {
         // initializing our variables.
         courseRV = findViewById(R.id.idRVCourses);
         progressBar = findViewById(R.id.idPB);
-
+            crewMemberDatabase.myDao().emptydb();
+            getData();
         // below line we are creating a new array list
         //courseModalArrayList = new ArrayList<>();
 
@@ -84,12 +90,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
         //Toast.makeText(this, "hello", Toast.LENGTH_LONG).show();
 
         // calling method to
         // build recycler view.
         progressBar.setVisibility(View.GONE);
         buildRecyclerView();
+        adapter.notifyDataSetChanged();
 
     }
 
@@ -116,6 +124,10 @@ public class MainActivity extends AppCompatActivity {
 
                         CrewMember crewlone = new CrewMember( name,  image,  status,  agency,  wiki);
                         crewMemberDatabase.myDao().addUser(crewlone);
+                        if(name.equals("Douglas Hurley"))
+                        {
+                            AlenMusk = crewlone;
+                        }
 
                         //courseModalArrayList.add(new CourseModal(name, image, agency, wiki, status));
                         buildRecyclerView();
@@ -143,6 +155,17 @@ public class MainActivity extends AppCompatActivity {
         courseRV.setHasFixedSize(true);
         courseRV.setLayoutManager(manager);
         courseRV.setAdapter(adapter);
+    }
+
+    public boolean isOnline() {
+        ConnectivityManager conMgr = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = conMgr.getActiveNetworkInfo();
+
+        if(netInfo == null || !netInfo.isConnected() || !netInfo.isAvailable()){
+            Toast.makeText(getApplicationContext(), "No Internet connection!", Toast.LENGTH_LONG).show();
+            return false;
+        }
+        return true;
     }
 }
 
